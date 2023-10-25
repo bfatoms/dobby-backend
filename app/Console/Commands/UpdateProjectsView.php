@@ -30,49 +30,39 @@ class UpdateProjectsView extends Command
     {
         DB::statement("DROP VIEW IF EXISTS user_project_rates");
         DB::statement("
-        create view user_project_rates as
-            select
-            projects.id as project_id,
-            time_entries.user_id as user_id,
-            sum(time_entries.duration) as total_duration,
-            ISNULL(project_prices.id) AND project_settings.id IS NOT NULL as is_project_setting_id,
-            project_settings.product_id as project_setting_product_id,
-            
-            /* 
-            projects.name as project_name,
-            tasks.id as task_id,
-            tasks.name as task_name,
-            time_entries.user_id as 'time_entry_user_id', */
-            /* products.sale_price as 'service_sales_price',
-            products.purchase_price as 'service_purchase_price',
-            project_settings.sales_price as 'global_sales_price',
-            project_settings.purchase_price as 'global_purchase_price',
-            project_prices.sales_price as 'override_sales_price',
-            project_prices.sales_price as 'override_purchase_price', */
-            
-            count(time_entries.user_id) as time_entries_count,
-            (
-                case
-                    when project_prices.sales_price IS NOT NULL then project_prices.sales_price
-                       when project_settings.sales_price IS NOT NULL then project_settings.sales_price
-                    when  products.sale_price IS NOT NULL then  products.sale_price
-                end
-            ) as final_sales_price,
-            (
-                case
-                    when project_prices.purchase_price IS NOT NULL then project_prices.purchase_price
-                       when project_settings.purchase_price IS NOT NULL then project_settings.purchase_price
-                    when  products.purchase_price IS NOT NULL then  products.purchase_price
-                end
-            ) as final_purchase_price
-             from
-            projects
-            left join tasks on tasks.project_id = projects.id
-            left join time_entries on time_entries.task_id = tasks.id
-            left join project_prices on project_prices.project_id = projects.id and project_prices.user_id = time_entries.user_id
-            left join project_settings on project_settings.user_id = time_entries.user_id
-            left join products on products.id = project_settings.product_id
-            group by projects.id, time_entries.user_id, project_settings.id, project_prices.id
+            CREATE VIEW user_project_rates AS
+            SELECT
+                projects.id AS project_id,
+                time_entries.user_id AS user_id,
+                SUM(time_entries.duration) AS total_duration,
+                CASE
+                    WHEN project_prices.id IS NULL AND project_settings.id IS NOT NULL THEN 1
+                    ELSE 0
+                END AS is_project_setting_id,
+                project_settings.product_id AS project_setting_product_id,
+                COUNT(time_entries.user_id) AS time_entries_count,
+                (
+                    CASE
+                        WHEN project_prices.sales_price IS NOT NULL THEN project_prices.sales_price
+                        WHEN project_settings.sales_price IS NOT NULL THEN project_settings.sales_price
+                        WHEN products.sale_price IS NOT NULL THEN products.sale_price
+                    END
+                ) AS final_sales_price,
+                (
+                    CASE
+                        WHEN project_prices.purchase_price IS NOT NULL THEN project_prices.purchase_price
+                        WHEN project_settings.purchase_price IS NOT NULL THEN project_settings.purchase_price
+                        WHEN products.purchase_price IS NOT NULL THEN products.purchase_price
+                    END
+                ) AS final_purchase_price
+            FROM
+                projects
+            LEFT JOIN tasks ON tasks.project_id = projects.id
+            LEFT JOIN time_entries ON time_entries.task_id = tasks.id
+            LEFT JOIN project_prices ON project_prices.project_id = projects.id AND project_prices.user_id = time_entries.user_id
+            LEFT JOIN project_settings ON project_settings.user_id = time_entries.user_id
+            LEFT JOIN products ON products.id = project_settings.product_id
+            GROUP BY projects.id, time_entries.user_id, project_settings.id, project_prices.id;
         ");
 
         DB::statement("DROP VIEW IF EXISTS user_project_costs");

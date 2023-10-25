@@ -7,6 +7,7 @@ use App\Models\Concerns\Listable;
 use App\Models\Concerns\Sortable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Setting;
 
 class ChartOfAccount extends Model
 {

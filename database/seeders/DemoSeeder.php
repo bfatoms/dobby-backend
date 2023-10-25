@@ -95,7 +95,7 @@ class DemoSeeder extends Seeder
                 ]);    
             }
 
-            $contact = Contact::where('name', 'Supplier Manny')->first();
+            $contact = Contact::where('name', 'iPhone Apple Supplier')->first();
 
             if(empty($contact)){
                 $contact = Contact::factory()->create([
@@ -106,11 +106,11 @@ class DemoSeeder extends Seeder
                     'sale_tax_type' => 'no tax',
                     'purchase_tax_type' => 'no tax',
                     'sale_discount' => 0,
-                    'name' => 'Supplier Manny'
+                    'name' => 'iPhone Apple Supplier'
                 ]);    
             }
 
-            $contact = Contact::where('name', 'Customer Manny')->first();
+            $contact = Contact::where('name', 'Gabby Garcia')->first();
 
             if(empty($contact)){
                 $contact = Contact::factory()->create([
@@ -121,7 +121,7 @@ class DemoSeeder extends Seeder
                     'sale_tax_type' => 'no tax',
                     'purchase_tax_type' => 'no tax',
                     'sale_discount' => 0,
-                    'name' => 'Customer Manny'
+                    'name' => 'Gabby Garcia'
                 ]);    
             }
 
@@ -182,6 +182,9 @@ class DemoSeeder extends Seeder
                     'code' => '00004'
                 ]);    
             }
+
+            // Bank
+
         }
     }
 }

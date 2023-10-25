@@ -3,6 +3,7 @@
 namespace App\Documentations;
 
     /**
+     * 
      * @OA\SecurityScheme(
      *      securityScheme="bearerAuth",
      *      in="header",

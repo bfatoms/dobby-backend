@@ -345,15 +345,7 @@ abstract class BaseController extends Controller
         $data = $this->model->setTable($this->view_table ?? $this->model->getTable())
             ->when(request('with'), fn ($q) => $q->with($this->parseWith()))
             ->when(request('scopes'), fn ($q) => collect(request('scopes'))->each(fn ($q) => $q->scope()))
-            // ->when(request('scopes'), function ($q) {
-            //     foreach (request('scopes') as $scope) {
-            //         $q->{$scope}();
-            //     }
-            // })
             ->when(request('fields'), fn ($q) => $q->select(array_merge(request('fields'), ['id'])))
-            // ->when(request('fields'), function ($q) {
-            //     $q->select(array_merge(request('fields'), ['id']));
-            // })
             ->find($id);
 
         if (empty($data)) {
